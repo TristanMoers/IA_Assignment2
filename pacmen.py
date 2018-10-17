@@ -6,6 +6,7 @@ import time
 
 # Global
 grid_init = 0
+grid_empty = 0
 nbr = 0
 nbc = 0
 
@@ -23,15 +24,9 @@ class Pacmen(Problem):
         SFTList = state.FTList[:]
 
 
-        SPList[0] = [1, 1]
-        s = State(SPList, SFList, SFTList)
-        print(s.PList)
-        actions.append((" : up ", s))
 
-        #self.diff_pos(SPList, SFList, SFTList, id, len(state.PList), actions, state, "")
-        #print(actions)
-        #for a in actions:
-        print(actions[0][1])
+        self.diff_pos(SPList, SFList, SFTList, id, len(state.PList), actions, state, "")
+
         for a in actions:
             yield a
 
@@ -45,11 +40,11 @@ class Pacmen(Problem):
         # UP
         if py > 0:
             if grid_init[py - 1][px] != 'x':
-                SPList2 = SPList
+                SPList2 = SPList[:]
                 SPList2[id] = [px, py - 1]
                 if grid_init[py - 1][px] == '@':
                     idF = SFList.index([px, py - 1])
-                    SFTList2 = SFTList
+                    SFTList2 = SFTList[:]
                     SFTList2[idF] = True
                     if id + 1< nb_pacmen:
                         self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : up ")
@@ -64,11 +59,11 @@ class Pacmen(Problem):
         # LEFT
         if px > 0:
             if grid_init[py][px - 1] != 'x':
-                SPList2 = SPList
+                SPList2 = SPList[:]
                 SPList2[id] = [px - 1, py]
                 if grid_init[py][px - 1] == '@':
                     idF = SFList.index([px - 1, py])
-                    SFTList2 = SFTList
+                    SFTList2 = SFTList[:]
                     SFTList2[idF] = True
                     if id + 1< nb_pacmen:
                         self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : left ")
@@ -84,11 +79,11 @@ class Pacmen(Problem):
          #DOWN
         if py < nbr - 1:
             if grid_init[py + 1][px] != 'x':
-                SPList2 = SPList
+                SPList2 = SPList[:]
                 SPList2[id] = [px, py + 1]
                 if grid_init[py + 1][px] == '@':
                     idF = SFList.index([px, py + 1])
-                    SFTList2 = SFTList
+                    SFTList2 = SFTList[:]
                     SFTList2[idF] = True
                     if id + 1< nb_pacmen:
                         self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : down ")
@@ -104,11 +99,11 @@ class Pacmen(Problem):
          #RIGHT
         if px < nbc - 1:
             if grid_init[py][px + 1] != 'x':
-                SPList2 = SPList
+                SPList2 = SPList[:]
                 SPList2[id] = [px + 1, py]
                 if grid_init[py][px + 1] == '@':
                     idF = SFList.index([px + 1, py])
-                    SFTList2 = SFTList
+                    SFTList2 = SFTList[:]
                     SFTList2[idF] = True
                     if id + 1< nb_pacmen:
                         self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : right ")
@@ -122,10 +117,11 @@ class Pacmen(Problem):
 
 
     def goal_test(self, state):
+        all = True
         for t in state.FTList:
             if t == False:
-                return False
-        return True
+                all = False
+        return all
 
 
 ###############
@@ -138,12 +134,15 @@ class State:
         self.FTList = FTList
 
     def __str__(self):
-        grid = grid_init[:]
-        for e in self.PList:
-            print(e)
-            grid[e[1]][e[0]] = "$"
+        grid = [x[:] for x in grid_empty]
+
         for f in self.FList:
-            grid[f[1]][f[0]] = "@"
+            if self.FTList[self.FList.index(f)] == True:
+                 grid[f[1]][f[0]] = " "
+            else:
+                grid[f[1]][f[0]] = "@"
+        for e in self.PList:
+            grid[e[1]][e[0]] = "$"
         s = ""
         for a in range(nsharp):
             s = s+"#"
@@ -215,13 +214,17 @@ FList = list()
 # Foods Taked List
 FTList = list()
 
+grid_empty = [x[:] for x in grid_init]
+
 for y in range(0, len(grid_init)):
     for x in range(0, len(grid_init[y])):
         if grid_init[y][x] == '$':
             PList.append([x, y])
+            grid_empty[y][x] = ' '
         if grid_init[y][x] == '@':
             FList.append([x, y])
             FTList.append(False)
+            grid_empty[y][x] = ' '
 
 
 init_state = State(PList, FList, FTList)
@@ -245,4 +248,4 @@ print('Number of moves: ' + str(node.depth))
 for n in path:
     print(n.state)  # assuming that the __str__ function of state outputs the correct format
     print()
-print("Finished in %.4f seconds" % (end_time - start_time))
+#print("Finished in %.4f seconds" % (end_time - start_time))
