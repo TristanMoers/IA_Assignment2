@@ -39,72 +39,80 @@ class Pacmen(Problem):
         # UP
         if py > 0:
             if grid_init[py - 1][px] != 'x':
-                SPList[id] = [px, py - 1]
+                SPList2 = SPList
+                SPList2[id] = [px, py - 1]
                 if grid_init[py - 1][px] == '@':
                     idF = SFList.index([px, py - 1])
-                    SFTList[idF] = True
+                    SFTList2 = SFTList
+                    SFTList2[idF] = True
                     if id + 1< nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : up ")
+                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : up ")
                     else:
-                        action_list.append((msg + str(id)+" : up ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : up ", State(SPList2, SFList, SFTList2)))
                 else:
                     if id + 1< nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : up ")
+                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : up ")
                     else:
-                        action_list.append((msg + str(id)+" : up ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : up ", State(SPList2, SFList, SFTList)))
 
         # LEFT
         if px > 0:
             if grid_init[py][px - 1] != 'x':
-                SPList[id] = [px - 1, py]
+                SPList2 = SPList
+                SPList2[id] = [px - 1, py]
                 if grid_init[py][px - 1] == '@':
                     idF = SFList.index([px - 1, py])
-                    SFTList[idF] = True
-                    if id + 1 < nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id + 1, nb_pacmen, action_list, state, msg + str(id)+" : left ")
+                    SFTList2 = SFTList
+                    SFTList2[idF] = True
+                    if id + 1< nb_pacmen:
+                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : left ")
                     else:
-                        action_list.append((msg + str(id)+" : left ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : left ", State(SPList2, SFList, SFTList2)))
                 else:
-                    if id + 1 < nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id + 1, nb_pacmen, action_list, state, msg + str(id)+" : left ")
+                    if id + 1< nb_pacmen:
+                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : left ")
                     else:
-                        action_list.append((msg + str(id)+" : left ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : left ", State(SPList2, SFList, SFTList)))
 
 
          #DOWN
         if py < nbr - 1:
             if grid_init[py + 1][px] != 'x':
-                SPList[id] = [px, py + 1]   
+                SPList2 = SPList
+                SPList2[id] = [px, py + 1]
                 if grid_init[py + 1][px] == '@':
                     idF = SFList.index([px, py + 1])
-                    SFTList[idF] = True
-                    if id + 1 < nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id + 1, nb_pacmen, action_list, state, msg + str(id)+" : down ")
+                    SFTList2 = SFTList
+                    SFTList2[idF] = True
+                    if id + 1< nb_pacmen:
+                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : down ")
                     else:
-                        action_list.append((msg + str(id)+" : down ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : down ", State(SPList2, SFList, SFTList2)))
                 else:
-                    if id + 1 < nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id + 1, nb_pacmen, action_list, state, msg + str(id)+" : down ")
+                    if id + 1< nb_pacmen:
+                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : down ")
                     else:
-                        action_list.append((msg + str(id)+" : down ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : down ", State(SPList2, SFList, SFTList)))
 
 
          #RIGHT
         if px < nbc - 1:
             if grid_init[py][px + 1] != 'x':
-                SPList[id] = [px + 1, py]
+                SPList2 = SPList
+                SPList2[id] = [px + 1, py]
                 if grid_init[py][px + 1] == '@':
                     idF = SFList.index([px + 1, py])
-                    SFTList[idF] = True
+                    SFTList2 = SFTList
+                    SFTList2[idF] = True
                     if id + 1< nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id + 1, nb_pacmen, action_list, state, msg + str(id)+" : right ")
+                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : right ")
                     else:
-                        action_list.append((msg + str(id)+" : right ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : right ", State(SPList2, SFList, SFTList2)))
                 else:
-                    if id  + 1< nb_pacmen:
-                        self.diff_pos(SPList, SFList, SFTList, id + 1, nb_pacmen, action_list, state, msg + str(id)+" : right ")
+                    if id + 1< nb_pacmen:
+                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : right ")
                     else:
-                        action_list.append((msg + str(id)+" : right ", State(SPList, SFList, SFTList)))
+                        action_list.append((msg + str(id)+" : right ", State(SPList2, SFList, SFTList)))
 
 
     def goal_test(self, state):
@@ -139,7 +147,7 @@ class State:
             for j in range(0, nbc):
                 s = s + str(grid[i][j]) + " "
             s = s + "#"
-            if i < self.nbr:
+            if i < nbr:
                 s = s + '\n'
         for a in range(nsharp):
             s = s+"#"
@@ -218,6 +226,7 @@ problem = Pacmen(init_state)
 start_time = time.time()
 
 node = astar_graph_search(problem,heuristic)
+
 
 # example of print
 path = node.path()
