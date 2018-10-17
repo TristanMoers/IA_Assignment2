@@ -23,9 +23,15 @@ class Pacmen(Problem):
         SFTList = state.FTList[:]
 
 
+        SPList[0] = [1, 1]
+        s = State(SPList, SFList, SFTList)
+        print(s.PList)
+        actions.append((" : up ", s))
 
-        self.diff_pos(SPList, SFList, SFTList, id, len(state.PList), actions, state, "")
-        print(actions)
+        #self.diff_pos(SPList, SFList, SFTList, id, len(state.PList), actions, state, "")
+        #print(actions)
+        #for a in actions:
+        print(actions[0][1])
         for a in actions:
             yield a
 
@@ -108,11 +114,10 @@ class Pacmen(Problem):
 
 
     def goal_test(self, state):
-        all = True
         for t in state.FTList:
             if t == False:
-                all = False
-        return all
+                return False
+        return True
 
 
 ###############
@@ -125,10 +130,11 @@ class State:
         self.FTList = FTList
 
     def __str__(self):
-        grid = grid_init
-        for e in PList:
+        grid = grid_init[:]
+        for e in self.PList:
+            print(e)
             grid[e[1]][e[0]] = "$"
-        for f in FList:
+        for f in self.FList:
             grid[f[1]][f[0]] = "@"
         s = ""
         for a in range(nsharp):
@@ -139,7 +145,7 @@ class State:
             for j in range(0, nbc):
                 s = s + str(grid[i][j]) + " "
             s = s + "#"
-            if i < self.nbr:
+            if i < nbr:
                 s = s + '\n'
         for a in range(nsharp):
             s = s+"#"
@@ -147,16 +153,16 @@ class State:
 
     def __eq__(self, other_state):
         eq = True
-        for p in range(0, len(PList)):
+        for p in range(0, len(self.PList)):
             if self.PList[p] != other_state.PList[p]:
                 eq = False
-        for f in range(0, len(FTList)):
+        for f in range(0, len(self.FTList)):
             if self.FTList[f] != other_state.FTList[f]:
                 eq = False
         return eq
 
     def __hash__(self):
-        return hash(str(PList) + str(FTList))
+        return hash(str(self.PList) + str(self.FTList))
 
 
 
