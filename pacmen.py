@@ -4,7 +4,10 @@ from search import *
 import time
 
 
-# Global
+# ================ Global Variables ==================
+# To optimize State and to no longer having to rebuild the grid we keep the basic grid to have the basic position 
+# And we will create a grid without pacman and food on which we will replace the elements to each str. 
+# it should save us time
 grid_init = 0
 grid_empty = 0
 nbr = 0
@@ -19,106 +22,66 @@ class Pacmen(Problem):
         actions = list()
         id = 0
 
-        SPList = state.PList[:]
-        SFList = state.FList[:]
-        SFTList = state.FTList[:]
+        SPacmanPostionList = state.PacmanPostionList[:]
+        SFoodPostionList = state.FoodPostionList[:]
+        SFoodIsTakedList = state.FoodIsTakedList[:]
 
 
-
-        self.diff_pos(SPList, SFList, SFTList, id, len(state.PList), actions, state, "")
+        self.diff_pos(SPacmanPostionList, SFoodPostionList, SFoodIsTakedList, id, len(state.PacmanPostionList), actions, state, "")
 
         for a in actions:
             yield a
 
 
+    # Check function allow to check if the position in parameter is walkable
+    # Then we call recursively diff_pos to check for next pacmen
+    def check(self, x, y, SPacmanPostionList, SFoodPostionList, SFoodIsTakedList, id, nb_pacmen, action_list, state, msg, direction):
+        if grid_init[y][x] != 'x':
+            SPacmanPostionList2 = SPacmanPostionList[:]
+            SPacmanPostionList2[id] = [x, y]
+            if grid_init[y][x] == '@':
+                idF = SFoodPostionList.index([x, y])
+                SFoodIsTakedList2 = SFoodIsTakedList[:]
+                SFoodIsTakedList2[idF] = True
+                if id + 1< nb_pacmen:
+                    self.diff_pos(SPacmanPostionList2, SFoodPostionList, SFoodIsTakedList2, id+1, nb_pacmen, action_list, state, msg + str(id)+ direction)
+                else:
+                    action_list.append((msg + str(id)+ direction, State(SPacmanPostionList2, SFoodPostionList, SFoodIsTakedList2)))  
+            else:
+                if id + 1< nb_pacmen:
+                    self.diff_pos(SPacmanPostionList2, SFoodPostionList, SFoodIsTakedList, id+1, nb_pacmen, action_list, state, msg + str(id)+ direction)
+                else:
+                    action_list.append((msg + str(id)+ direction, State(SPacmanPostionList2, SFoodPostionList, SFoodIsTakedList)))  
 
-    def diff_pos(self, SPList, SFList, SFTList, id, nb_pacmen, action_list, state, msg):
-        p = state.PList[id]
+
+    def diff_pos(self, SPacmanPostionList, SFoodPostionList, SFoodIsTakedList, id, nb_pacmen, action_list, state, msg):
+        p = state.PacmanPostionList[id]
         px = p[0]
         py = p[1]
 
         # UP
         if py > 0:
-            if grid_init[py - 1][px] != 'x':
-                SPList2 = SPList[:]
-                SPList2[id] = [px, py - 1]
-                if grid_init[py - 1][px] == '@':
-                    idF = SFList.index([px, py - 1])
-                    SFTList2 = SFTList[:]
-                    SFTList2[idF] = True
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : up ")
-                    else:
-                        action_list.append((msg + str(id)+" : up ", State(SPList2, SFList, SFTList2)))
-                else:
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : up ")
-                    else:
-                        action_list.append((msg + str(id)+" : up ", State(SPList2, SFList, SFTList)))
+            self.check(px, py - 1, SPacmanPostionList, SFoodPostionList, SFoodIsTakedList, id, nb_pacmen, action_list, state, msg, " : up ")
 
         # LEFT
         if px > 0:
-            if grid_init[py][px - 1] != 'x':
-                SPList2 = SPList[:]
-                SPList2[id] = [px - 1, py]
-                if grid_init[py][px - 1] == '@':
-                    idF = SFList.index([px - 1, py])
-                    SFTList2 = SFTList[:]
-                    SFTList2[idF] = True
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : left ")
-                    else:
-                        action_list.append((msg + str(id)+" : left ", State(SPList2, SFList, SFTList2)))
-                else:
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : left ")
-                    else:
-                        action_list.append((msg + str(id)+" : left ", State(SPList2, SFList, SFTList)))
+            self.check(px-1, py, SPacmanPostionList, SFoodPostionList, SFoodIsTakedList, id, nb_pacmen, action_list, state, msg, " : left ")
 
 
          #DOWN
         if py < nbr - 1:
-            if grid_init[py + 1][px] != 'x':
-                SPList2 = SPList[:]
-                SPList2[id] = [px, py + 1]
-                if grid_init[py + 1][px] == '@':
-                    idF = SFList.index([px, py + 1])
-                    SFTList2 = SFTList[:]
-                    SFTList2[idF] = True
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : down ")
-                    else:
-                        action_list.append((msg + str(id)+" : down ", State(SPList2, SFList, SFTList2)))
-                else:
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : down ")
-                    else:
-                        action_list.append((msg + str(id)+" : down ", State(SPList2, SFList, SFTList)))
+            self.check(px, py +1 , SPacmanPostionList, SFoodPostionList, SFoodIsTakedList, id, nb_pacmen, action_list, state, msg, " : down ")
 
 
          #RIGHT
         if px < nbc - 1:
-            if grid_init[py][px + 1] != 'x':
-                SPList2 = SPList[:]
-                SPList2[id] = [px + 1, py]
-                if grid_init[py][px + 1] == '@':
-                    idF = SFList.index([px + 1, py])
-                    SFTList2 = SFTList[:]
-                    SFTList2[idF] = True
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList2, id+1, nb_pacmen, action_list, state, msg + str(id)+" : right ")
-                    else:
-                        action_list.append((msg + str(id)+" : right ", State(SPList2, SFList, SFTList2)))
-                else:
-                    if id + 1< nb_pacmen:
-                        self.diff_pos(SPList2, SFList, SFTList, id+1, nb_pacmen, action_list, state, msg + str(id)+" : right ")
-                    else:
-                        action_list.append((msg + str(id)+" : right ", State(SPList2, SFList, SFTList)))
+            self.check(px +1, py , SPacmanPostionList, SFoodPostionList, SFoodIsTakedList, id, nb_pacmen, action_list, state, msg, " : right ")
 
 
+    # The goal is reached when all the foods are taken
     def goal_test(self, state):
         all = True
-        for t in state.FTList:
+        for t in state.FoodIsTakedList:
             if t == False:
                 all = False
         return all
@@ -128,20 +91,20 @@ class Pacmen(Problem):
 # State class #
 ###############
 class State:
-    def __init__(self, PList, FList, FTList):
-        self.PList = PList
-        self.FList = FList
-        self.FTList = FTList
+    def __init__(self, PacmanPostionList, FoodPostionList, FoodIsTakedList):
+        self.PacmanPostionList = PacmanPostionList
+        self.FoodPostionList = FoodPostionList
+        self.FoodIsTakedList = FoodIsTakedList
 
     def __str__(self):
         grid = [x[:] for x in grid_empty]
 
-        for f in self.FList:
-            if self.FTList[self.FList.index(f)] == True:
+        for f in self.FoodPostionList:
+            if self.FoodIsTakedList[self.FoodPostionList.index(f)] == True:
                  grid[f[1]][f[0]] = " "
             else:
                 grid[f[1]][f[0]] = "@"
-        for e in self.PList:
+        for e in self.PacmanPostionList:
             grid[e[1]][e[0]] = "$"
         s = ""
         for a in range(nsharp):
@@ -160,16 +123,16 @@ class State:
 
     def __eq__(self, other_state):
         eq = True
-        for p in range(0, len(self.PList)):
-            if self.PList[p] != other_state.PList[p]:
+        for p in range(0, len(self.PacmanPostionList)):
+            if self.PacmanPostionList[p] != other_state.PacmanPostionList[p]:
                 eq = False
-        for f in range(0, len(self.FTList)):
-            if self.FTList[f] != other_state.FTList[f]:
+        for f in range(0, len(self.FoodIsTakedList)):
+            if self.FoodIsTakedList[f] != other_state.FoodIsTakedList[f]:
                 eq = False
         return eq
 
     def __hash__(self):
-        return hash(str(self.PList) + str(self.FTList))
+        return hash(str(self.PacmanPostionList) + str(self.FoodIsTakedList))
 
 
 
@@ -202,35 +165,35 @@ def heuristic(node):
 #####################
 grid_init,nsharp = readInstanceFile(sys.argv[1])
 
+grid_empty = [x[:] for x in grid_init]
 
 # ============= Search All in grid =============
 nbr = len(grid_init)
 nbc = len(grid_init[0])
 
-# PLayer Position List
-PList = list()
+# Pacman Position List
+PacmanPostionList = []
 # Foods Position List
-FList = list()
+FoodPostionList = []
 # Foods Taked List
-FTList = list()
+FoodIsTakedList = []
 
-grid_empty = [x[:] for x in grid_init]
-
+# We keep all position of elements in these lists
+# We remove these elements from the grid to have empty grid
 for y in range(0, len(grid_init)):
     for x in range(0, len(grid_init[y])):
         if grid_init[y][x] == '$':
-            PList.append([x, y])
+            PacmanPostionList.append([x, y])
             grid_empty[y][x] = ' '
         if grid_init[y][x] == '@':
-            FList.append([x, y])
-            FTList.append(False)
+            FoodPostionList.append([x, y])
+            FoodIsTakedList.append(False)
             grid_empty[y][x] = ' '
 
 
-init_state = State(PList, FList, FTList)
+init_state = State(PacmanPostionList, FoodPostionList, FoodIsTakedList)
 
 problem = Pacmen(init_state)
-
 
 start_time = time.time()
 
