@@ -2,6 +2,7 @@
 '''NAMES OF THE AUTHOR(S): Gael Aglin <gael.aglin@uclouvain.be>, Francois Aubry <francois.aubry@uclouvain.be>'''
 from search import *
 import time
+import math
 
 
 # ================ Global Variables ==================
@@ -152,12 +153,24 @@ def readInstanceFile(filename):
 ######################
 # Heuristic function #
 ######################
-def heuristic(node):
+def heuristic_null(node):
     h = 0.0
     # ...
     # compute an heuristic value
     # ...
     return h
+
+def heuristic_manathan(node):
+    h = 0.0
+    s = node.state
+    man_min = 0
+    for f in s.FoodPostionList:
+        man_from_p = []
+        for p in s.PacmanPostionList:
+            man_from_p.append(math.fabs(p[0]-f[0]) + math.fabs(p[1]-f[1]))
+        man_min = man_min + min(man_from_p)
+        print(man_min)
+    return man_min
 
 
 #####################
@@ -197,7 +210,7 @@ problem = Pacmen(init_state)
 
 start_time = time.time()
 
-node = astar_graph_search(problem,heuristic)
+node = astar_graph_search(problem,heuristic_manathan)
 
 
 # example of print
@@ -211,4 +224,4 @@ print('Number of moves: ' + str(node.depth))
 for n in path:
     print(n.state)  # assuming that the __str__ function of state outputs the correct format
     print()
-#print("Finished in %.4f seconds" % (end_time - start_time))
+print("Finished in %.4f seconds" % (end_time - start_time))
