@@ -17,63 +17,92 @@ class Pacmen(Problem):
     def successor(self, state):
         actions = list()
         id = 0
-        for p in state.PList:
-            px = p[0]
-            py = p[1]
 
-            SPList = state.PList
-            SFList = state.FList
-            SFTList = state.FTList
+        SPList = state.PList
+        SFList = state.FList
+        SFTList = state.FTList
 
-           # UP
-            if py > 0:
-                if grid_init[py - 1][px] != 'x':
-                    SPList[id] = [px, py - 1]
-                    if grid_init[py - 1][px] == '@':
-                        idF = SFList.index([px, py - 1])
-                        SFTList[idF] = True
-                        
-
-            # LEFT
-            if px > 0:
-                if grid_init[py][px - 1] != 'x':
-                    SPList[id] = [px - 1, py]
-                    if grid_init[py][px - 1] == '@':
-                        idF = SFList.index([px - 1, py])
-                        SFTList[idF] = True
-                        actions.append((str(id) + 'left', State(SPList, SFList, SFTList)))
-                    else:
-                        actions.append((str(id) + 'left', State(SPList, SFList, SFTList)))
-
-            #DOWN
-            if py < nbr - 1:
-                if grid_init[py + 1][px] != 'x':                  
-                    SPList[id] = [px, py + 1]
-                    if grid_init[py + 1][px] == '@':
-                        idF = SFList.index([px, py + 1])
-                        SFTList[idF] = True
-                        actions.append((str(id) + 'down', State(SPList, SFList, SFTList)))
-                    else:
-                        actions.append((str(id) + 'down', State(SPList, SFList, SFTList)))
-
-
-            #RIGHT
-            if px < nbc - 1:
-                if grid_init[py][px + 1] != 'x':                   
-                    SPList[id] = [px + 1, py]
-                    if grid_init[py][px + 1] == '@':
-                        idF = SFList.index([px + 1, py])
-                        SFTList[idF] = True
-                        actions.append((str(id) + 'right', State(SPList, SFList, SFTList)))
-                    else:
-                        actions.append((str(id) + 'right', State(SPList, SFList, SFTList)))
-
-            id = id+1
+        iff_pos(SPList, SFList, SFTList, id, nb_pacmen, actions)
 
         for a in actions:
             yield a
 
 
+
+    def diff_pos(SPList, SFList, SFTList, id, nb_pacmen, action_list):
+        p = state.PList[id]
+        px = p[0]
+        py = p[1]
+
+        # UP
+         if py > 0:
+             if grid_init[py - 1][px] != 'x':
+                 SPList[id] = [px, py - 1]
+                 if grid_init[py - 1][px] == '@':
+                     idF = SFList.index([px, py - 1])
+                     SFTList[idF] = True
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                     else:
+                         action_list.append('move', State(SPList, SFList, SFTList))
+                 else:
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                      else:
+                          action_list.append('move', State(SPList, SFList, SFTList))
+
+         # LEFT
+         if px > 0:
+             if grid_init[py][px - 1] != 'x':
+                 SPList[id] = [px - 1, py]
+                 if grid_init[py][px - 1] == '@':
+                     idF = SFList.index([px - 1, py])
+                     SFTList[idF] = True
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                     else:
+                         action_list.append('move', State(SPList, SFList, SFTList))
+                 else:
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                      else:
+                          action_list.append('move', State(SPList, SFList, SFTList))
+
+
+         #DOWN
+         if py < nbr - 1:
+             if grid_init[py + 1][px] != 'x':
+                 SPList[id] = [px, py + 1]
+                 if grid_init[py + 1][px] == '@':
+                     idF = SFList.index([px, py + 1])
+                     SFTList[idF] = True
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                     else:
+                         action_list.append('move', State(SPList, SFList, SFTList))
+                 else:
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                      else:
+                          action_list.append('move', State(SPList, SFList, SFTList))
+
+
+         #RIGHT
+         if px < nbc - 1:
+             if grid_init[py][px + 1] != 'x':
+                 SPList[id] = [px + 1, py]
+                 if grid_init[py][px + 1] == '@':
+                     idF = SFList.index([px + 1, py])
+                     SFTList[idF] = True
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                     else:
+                         action_list.append('move', State(SPList, SFList, SFTList))
+                 else:
+                     if id < nb_pacmen:
+                         diff_pos(SPList, SFList, SFTList, id+1, nb_pacmen)
+                      else:
+                          action_list.append('move', State(SPList, SFList, SFTList))
 
     def goal_test(self, state):
         all = True
