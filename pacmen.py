@@ -160,17 +160,37 @@ def heuristic_null(node):
     # ...
     return h
 
-def heuristic_manathan(node):
+def heuristic_manathanV1(node):
     h = 0.0
     s = node.state
     man_min = 0
     for f in s.FoodPostionList:
-        man_from_p = []
-        for p in s.PacmanPostionList:
-            man_from_p.append(math.fabs(p[0]-f[0]) + math.fabs(p[1]-f[1]))
-        man_min = man_min + min(man_from_p)
-        print(man_min)
+        if s.FoodIsTakedList[s.FoodPostionList.index(f)] == False:
+        #man_from_p = []
+            man_from_p = math.inf
+            for p in s.PacmanPostionList:
+                #man_from_p.append(math.fabs(p[0]-f[0]) + math.fabs(p[1]-f[1]))
+                if math.fabs(p[0]-f[0]) + math.fabs(p[1]-f[1]) < man_from_p:
+                    man_from_p = math.fabs(p[0]-f[0]) + math.fabs(p[1]-f[1])
+                #man_min = man_min + min(man_from_p)
+            man_min = man_min + man_from_p
+                #print(man_min)
     return man_min
+
+def heuristic_manathanV2(node):
+    s = node.state
+    man_min = 0
+    PacmanPostionListHeu = [x[:] for x in s.PacmanPostionList]
+    for f in s.FoodPostionList:
+        if s.FoodIsTakedList[s.FoodPostionList.index(f)] == False:
+            man_from_p = []
+            for p in PacmanPostionListHeu:
+                man_from_p.append(math.fabs(p[0]-f[0]) + math.fabs(p[1]-f[1]))
+            PacmanPostionListHeu[man_from_p.index(min(man_from_p))][0] = f[0]
+            PacmanPostionListHeu[man_from_p.index(min(man_from_p))][1] = f[1]
+            man_min = man_min + min(man_from_p)
+    return man_min
+
 
 
 #####################
@@ -210,7 +230,7 @@ problem = Pacmen(init_state)
 
 start_time = time.time()
 
-node = astar_graph_search(problem,heuristic_manathan)
+node = astar_graph_search(problem,heuristic_manathanV1)
 
 
 # example of print
@@ -224,4 +244,4 @@ print('Number of moves: ' + str(node.depth))
 for n in path:
     print(n.state)  # assuming that the __str__ function of state outputs the correct format
     print()
-print("Finished in %.4f seconds" % (end_time - start_time))
+#print("Finished in %.4f seconds" % (end_time - start_time))
